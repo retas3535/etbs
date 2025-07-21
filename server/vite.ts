@@ -6,6 +6,14 @@ import { type Server } from "http";
 import viteConfig from "../vite.config";
 import { nanoid } from "nanoid";
 
+// ES Modülü uyumlu __dirname ve __filename oluşturmak için gerekli import'lar
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+
+// ES Modülü ortamında __dirname'i türetme
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
 const viteLogger = createLogger();
 
 export function log(message: string, source = "express") {
@@ -45,8 +53,9 @@ export async function setupVite(app: Express, server: Server) {
     const url = req.originalUrl;
 
     try {
+      // import.meta.dirname yerine __dirname kullanıldı
       const clientTemplate = path.resolve(
-        import.meta.dirname,
+        __dirname,
         "..",
         "client",
         "index.html",
@@ -68,7 +77,8 @@ export async function setupVite(app: Express, server: Server) {
 }
 
 export function serveStatic(app: Express) {
-  const distPath = path.resolve(import.meta.dirname, "public");
+  // import.meta.dirname yerine __dirname kullanıldı
+  const distPath = path.resolve(__dirname, "public");
 
   if (!fs.existsSync(distPath)) {
     throw new Error(
